@@ -36,6 +36,10 @@ const router = new VueRouter({
     name: 'playListDetail',
     component: require('../views/playListDetail')
   }, {
+    path: '/video/:id',
+    name: 'video',
+    component: require('../views/video')
+  },{
     path: '*', redirect: '/index/rage'
   }]
 })

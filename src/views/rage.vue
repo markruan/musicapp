@@ -6,18 +6,18 @@
       </div>
       <div class="container" v-show="!isloading">
       <div id="slider">
-        <swiper :options="swiperOption">
-          <swiper-slide><img src="/static/banner1.jpg" class="banner-item"  alt=""></swiper-slide>
-          <swiper-slide><img src="/static/banner2.jpg" class="banner-item"  alt=""></swiper-slide>
-          <swiper-slide><img src="/static/banner3.jpg" class="banner-item"  alt=""></swiper-slide>
-          <swiper-slide><img src="/static/banner4.jpg" class="banner-item"  alt=""></swiper-slide>
+        <swiper v-if="bannerList.length>1" :options="swiperOption"  ref="mySwiper" class="swiper-box">
+          <swiper-slide  v-for="item in bannerList"><img :src="item.picUrl" class="banner-item"  alt=""></swiper-slide>
+          
           <div class="swiper-pagination" slot="pagination"></div>
+          <div class="swiper-button-prev" slot="button-prev"></div>
+          <div class="swiper-button-next" slot="button-next"></div>
         </swiper>
       </div>
       <div class="wrapper">
       <div class="g-title song-list">推荐歌单 <router-link :to="{path: '/index/songList'}">更多></router-link></div>
       <mu-flexbox wrap="wrap" justify="space-around" class="box" :gutter="0">
-        <mu-flexbox-item basis="28%" class="item" :key="item.id" v-for="item in playList">
+        <mu-flexbox-item basis="28%" class="item" :key="item.id" v-for="(item,index) in playList" v-if="index<24">
           <router-link :to="{name: 'playListDetail',params: { id: item.id, name: item.name, coverImg: item.coverImgUrl, creator: item.creator, count: item.playCount, desc: item.description }}">
           <div class="bar">{{item.playCount | formatCount}}</div>
           <img class="item-img img-response" :src="item.coverImgUrl + '?param=230y230'" lazy="loading">
@@ -27,26 +27,14 @@
       </mu-flexbox>
         <div class="g-title mv">推荐MV <router-link :to="{}">更多></router-link></div>
         <mu-flexbox wrap="wrap" justify="space-around" class="box" :gutter="0">
-          <mu-flexbox-item basis="40%" class="mv-item">
-            <img class="img-response" src="http://p4.music.126.net/0r0H97s-bM0lZzs6x0Ibeg==/18685100604133296.jpg?param=300y170">
-            <div class="mv-name">Skin to sking</div>
-            <div class="mv-author">鹿晗</div>
+          <mu-flexbox-item basis="40%" class="mv-item" v-for="item in mvList">
+            <router-link :to="{name: 'video',params: {id:item.id}}">
+            <img class="img-response" :src="item.cover+'?param=300y170'">
+            <div class="mv-name">{{item.name}}</div>
+            <div class="mv-author">{{item.artists[0].name}}</div>
+             </router-link>
           </mu-flexbox-item>
-          <mu-flexbox-item basis="40%" class="mv-item">
-            <img class="img-response"  src="http://p4.music.126.net/0r0H97s-bM0lZzs6x0Ibeg==/18685100604133296.jpg?param=300y170">
-            <div class="mv-name">Skin to sking</div>
-            <div class="mv-author">鹿晗</div>
-          </mu-flexbox-item>
-          <mu-flexbox-item basis="40%" class="mv-item">
-            <img class="img-response" src="http://p3.music.126.net/DNlE0AUQdXci4XaQaxsHPQ==/18643319162278619.jpg?param=300y170">
-            <div class="mv-name">Skin to skingSkin to</div>
-            <div class="mv-author">鹿晗</div>
-          </mu-flexbox-item>
-          <mu-flexbox-item basis="40%" class="mv-item">
-            <img class="img-response"  src="http://p3.music.126.net/DNlE0AUQdXci4XaQaxsHPQ==/18643319162278619.jpg?param=300y170">
-            <div class="mv-name">Skin to sking</div>
-            <div class="mv-author">鹿晗</div>
-          </mu-flexbox-item>
+         
         </mu-flexbox>
       </div>
       </div>
@@ -118,6 +106,7 @@
       overflow : hidden;
       font-size: 12px;
       height: 1.7rem;
+          text-align: center;
       text-overflow: ellipsis;
       display: -webkit-box;
       -webkit-line-clamp: 2;
@@ -182,12 +171,15 @@ export default {
   data () {
     return {
       swiperOption: {
-        pagination: '.swiper-pagination',
+        pagination: {
+          el: '.swiper-pagination'
+        },
         paginationClickable: true
       },
       isloading: true,
       playList: [],
-      mvList: []
+      mvList: [],
+      bannerList: []
     }
   },
   components: {
@@ -199,9 +191,19 @@ export default {
   },
   methods: {
     get () {
-      this.$http.get(api.getPlayListByWhere('全部', 'hot', 0, true, 6)).then((res) => {
+      this.$http.get(api.getKu()).then((res) => {
         this.isloading = false
-        this.playList = res.data.playlists
+         
+        this.playList = res.data.playlist
+      })
+      this.$http.get(api.getMvList()).then((res) => {
+        this.isloading = false
+        this.mvList = res.data.data
+
+      })
+      this.$http.get(api.getBanner()).then((res) => {
+        this.isloading = false
+        this.bannerList = res.data.banners
       })
       // this.$toast('Let me give a toast to you all.', {
       //   horizontalPosition: 'center',

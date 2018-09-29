@@ -17,9 +17,10 @@
     "fastclick": "^1.0.6",
     "muse-ui": "^2.0.2",
     "vue": "^2.2.2",
-    "vue-awesome-swiper": "^2.3.0",
+    "vue-awesome-swiper": "^2.6.7",
     "vue-easy-toast": "^1.0.1",
     "vue-router": "^2.2.0",
+    "vue-video-player": "^5.0.2",
     "vuex": "^2.1.1"
   },
   "devDependencies": {

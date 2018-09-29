@@ -75,16 +75,17 @@ export default {
       if (parseInt(to.params.id) !== parseInt(vm.id)) {
         vm.get()
       }
+       vm.id = vm.$route.params.id
       // 判断过来的路由是否带有对应的参数信息
-      if (to.params.coverImg) {
-         // 获取songList传入的数据
-        vm.coverImgUrl = vm.$route.params.coverImg
-        vm.name = vm.$route.params.name
-        vm.description = vm.$route.params.desc
-        vm.playCount = vm.$route.params.count
-        vm.creator = vm.$route.params.creator
-        vm.id = vm.$route.params.id
-      }
+      // if (to.params.coverImg) {
+      //    // 获取songList传入的数据
+      //   vm.coverImgUrl = vm.$route.params.coverImg
+      //   vm.name = vm.$route.params.name
+      //   vm.description = vm.$route.params.desc
+      //   vm.playCount = vm.$route.params.count
+      //   vm.creator = vm.$route.params.creator
+      //   vm.id = vm.$route.params.id
+      // }
       window.onscroll = () => {
         var opa = window.pageYOffset / 150
         if (opa > 0.5) {
@@ -109,6 +110,10 @@ export default {
       this.isloading = true
       this.$http.get(api.getPlayListDetail(this.$route.params.id)).then((res) => {
         this.list = res.data.playlist.tracks
+        this.creator=res.data.playlist.creator
+        this.coverImgUrl=res.data.playlist.coverImgUrl
+        this.name=res.data.playlist.name
+
         this.isloading = false
       }).catch((error) => {
         console.log('加载歌单信息出错:' + error)
@@ -169,9 +174,7 @@ export default {
         height: 56px;
         left: 0;
         z-index: 15;
-    }
-
-     // 修改默认的bar样式
+    }  
     .mu-appbar {
       background-color: transparent;
     }
